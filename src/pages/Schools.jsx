@@ -62,6 +62,7 @@ export default function Schools() {
   // Roster Filter State
   const [rosterSearch, setRosterSearch] = useState('');
   const [rosterGradeFilter, setRosterGradeFilter] = useState('All');
+  const [rosterYearFilter, setRosterYearFilter] = useState('All');
 
   // Coordinator Details State
   const [coordinator, setCoordinator] = useState({
@@ -97,7 +98,10 @@ export default function Schools() {
     { id: 3, name: 'Rohan Gupta', grade: 'Grade 5 (Jr Level)', track: 'Technik Pride Award', date: '04 Sep 2026', status: 'Nomination Received' },
     { id: 4, name: 'Diya Patel', grade: 'Grade 8 (Sr Level)', track: 'AI & Machine Learning', date: '04 Sep 2026', status: 'Registered & Verified' },
     { id: 5, name: 'Siddharth M.', grade: 'Grade 3 (Jr Level)', track: 'Mental Maths Olympiad', date: '05 Sep 2026', status: 'Registered & Verified' },
-    { id: 6, name: 'Ananya Roy', grade: 'Grade 6 (Sr Level)', track: 'Technik Pride Award', date: '05 Sep 2026', status: 'Nomination Received' }
+    { id: 6, name: 'Ananya Roy', grade: 'Grade 6 (Sr Level)', track: 'Technik Pride Award', date: '05 Sep 2026', status: 'Nomination Received' },
+    { id: 7, name: 'Vikramaditya K.', grade: 'Grade 8 (Sr Level)', track: 'Technik Pride Award', date: '10 Nov 2025', status: 'Pride Award Winner' },
+    { id: 8, name: 'Priya Sundaram', grade: 'Grade 5 (Jr Level)', track: 'Coding & Algorithms', date: '14 Oct 2025', status: 'Registered & Verified' },
+    { id: 9, name: 'Aditya Narayan', grade: 'Grade 7 (Sr Level)', track: 'Robotics Olympiad', date: '08 Dec 2024', status: 'Registered & Verified' }
   ]);
 
   // Initial Sample Partner Schools Directory
@@ -242,7 +246,8 @@ export default function Schools() {
     const matchesName = st.name.toLowerCase().includes(rosterSearch.toLowerCase()) || 
                         st.track.toLowerCase().includes(rosterSearch.toLowerCase());
     const matchesGrade = rosterGradeFilter === 'All' || st.grade.includes(rosterGradeFilter);
-    return matchesName && matchesGrade;
+    const matchesYear = rosterYearFilter === 'All' || st.date.includes(rosterYearFilter);
+    return matchesName && matchesGrade && matchesYear;
   });
 
   return (
@@ -326,7 +331,18 @@ export default function Schools() {
               onClick={() => setActiveTab('roster')}
             >
               <Users size={16} />
-              <span>Students List ({submittedRoster.length})</span>
+              <span>All Students ({submittedRoster.length})</span>
+            </button>
+
+            <button 
+              style={{
+                ...styles.tabNavBtn,
+                ...(activeTab === 'pride-nominated-list' ? styles.tabNavBtnActiveGold : {})
+              }}
+              onClick={() => setActiveTab('pride-nominated-list')}
+            >
+              <Trophy size={16} color="#f59e0b" />
+              <span>Nominated for Pride Award ({submittedRoster.filter(r => r.track.includes('Pride')).length})</span>
             </button>
 
             <button 
@@ -337,7 +353,7 @@ export default function Schools() {
               onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }}
             >
               <Trophy size={16} />
-              <span>Nominate Students for Pride Award</span>
+              <span>+ Nominate Student</span>
             </button>
 
             <button 
@@ -349,17 +365,6 @@ export default function Schools() {
             >
               <BookOpen size={16} />
               <span>Olympiad Registration</span>
-            </button>
-
-            <button 
-              style={{
-                ...styles.tabNavBtn,
-                ...(activeTab === 'directory' ? styles.tabNavBtnActiveDark : {})
-              }}
-              onClick={() => setActiveTab('directory')}
-            >
-              <Building size={16} />
-              <span>Partner Schools Directory ({schoolsList.length})</span>
             </button>
           </div>
 
@@ -421,6 +426,18 @@ export default function Schools() {
                     <option value="Jr Level">Junior Level (Grade 3-5)</option>
                     <option value="Sr Level">Senior Level (Grade 6-8)</option>
                   </select>
+
+                  <label style={{ ...styles.filterLabel, marginLeft: '0.85rem' }}>Academic Year:</label>
+                  <select 
+                    value={rosterYearFilter}
+                    onChange={(e) => setRosterYearFilter(e.target.value)}
+                    style={styles.selectFilter}
+                  >
+                    <option value="All">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
                 </div>
               </div>
 
@@ -480,6 +497,103 @@ export default function Schools() {
 
             </div>
 
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* PRIDE AWARD NOMINATED STUDENTS LIST VIEW                                  */}
+      {/* ========================================================================= */}
+      {activeTab === 'pride-nominated-list' && (
+        <section style={styles.sectionPadding}>
+          <div className="container">
+            <div style={styles.rosterCardWrapper}>
+              
+              <div style={{ ...styles.rosterHeaderRow, background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)', padding: '1.25rem 1.5rem', borderRadius: '12px', border: '1px solid #fde047', marginBottom: '1.5rem' }}>
+                <div>
+                  <h2 style={{ ...styles.rosterTitle, color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Trophy size={22} color="#d97706" />
+                    Students Nominated for Technik Pride Award
+                  </h2>
+                  <p style={{ ...styles.rosterSub, color: '#b45309' }}>
+                    List of students nominated by St. Xavier International School. Submitted for review by Technik Super Admin & Olympiad Committee.
+                  </p>
+                </div>
+                <div>
+                  <button 
+                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }} 
+                    style={styles.actionBtnGold}
+                  >
+                    <Trophy size={15} /> + Nominate Student
+                  </button>
+                </div>
+              </div>
+
+              {/* Roster Table */}
+              <div style={styles.tableResponsive}>
+                <table style={styles.rosterTable}>
+                  <thead>
+                    <tr style={styles.tableHeaderRow}>
+                      <th style={styles.thCell}>Student Name</th>
+                      <th style={styles.thCell}>Class / Level</th>
+                      <th style={styles.thCell}>Nominated Category</th>
+                      <th style={styles.thCell}>Date Submitted</th>
+                      <th style={styles.thCell}>Nomination Status</th>
+                      <th style={styles.thCell}>Admin Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {submittedRoster.filter(st => st.track.includes('Pride')).length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                          No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      submittedRoster.filter(st => st.track.includes('Pride')).map((st, i) => (
+                        <tr key={i} style={styles.tableBodyRow}>
+                          <td style={styles.tdCellBold}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <div style={{ ...styles.avatarCircle, background: '#f59e0b', color: '#ffffff' }}>{st.name.charAt(0)}</div>
+                              <span>{st.name}</span>
+                            </div>
+                          </td>
+                          <td style={styles.tdCell}>{st.grade}</td>
+                          <td style={styles.tdCell}>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#b45309' }}>
+                              Technik Pride Award Nomination
+                            </span>
+                          </td>
+                          <td style={styles.tdCell}>{st.date}</td>
+                          <td style={styles.tdCell}>
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              padding: '0.25rem 0.65rem',
+                              borderRadius: '20px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              background: '#fef3c7',
+                              color: '#d97706',
+                              border: '1px solid #fde047'
+                            }}>
+                              <Clock size={12} style={{ marginRight: '4px' }} />
+                              Submitted &amp; Under Review
+                            </span>
+                          </td>
+                          <td style={styles.tdCell}>
+                            <span style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 600 }}>
+                              Forwarded to Technik Super Admin
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
           </div>
         </section>
       )}
@@ -1234,123 +1348,6 @@ export default function Schools() {
 
           </div>
         </section>
-      )}
-
-      {/* ========================================================================= */}
-      {/* OPTION 4: PARTNER SCHOOLS DIRECTORY VIEW                                  */}
-      {/* ========================================================================= */}
-      {activeTab === 'directory' && (
-        <section style={styles.sectionPadding}>
-          <div className="container">
-            
-            <div style={styles.searchBarRow}>
-              <div style={styles.searchBox}>
-                <Search size={18} color="#64748b" style={{ marginRight: '0.5rem' }} />
-                <input 
-                  type="text" 
-                  placeholder="Search by school name or city..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={styles.searchInput}
-                />
-              </div>
-
-              <div style={styles.filterGroup}>
-                <label style={styles.filterLabel}>Filter City:</label>
-                <select 
-                  value={selectedCity} 
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  style={styles.selectFilter}
-                >
-                  <option value="All">All Cities</option>
-                  <option value="Chennai">Chennai</option>
-                  <option value="Coimbatore">Coimbatore</option>
-                  <option value="Madurai">Madurai</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Directory Cards Grid */}
-            <div style={styles.directoryGrid} className="schools-directory-grid">
-              {filteredSchools.map((sch) => (
-                <div key={sch.id} style={styles.schoolCard}>
-                  <div style={styles.schoolCardHeader}>
-                    <div style={styles.schoolIconCircle}>
-                      <Building size={20} color="#2563eb" />
-                    </div>
-                    <div>
-                      <h3 style={styles.schoolName}>{sch.name}</h3>
-                      <p style={styles.schoolLocation}>
-                        <MapPin size={12} color="#64748b" style={{ marginRight: '3px' }} />
-                        {sch.city}, {sch.state}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div style={styles.schoolDivider} />
-
-                  <div style={styles.schoolMetaRow}>
-                    <div>
-                      <span style={styles.metaLabel}>Students Enrolled</span>
-                      <h4 style={styles.metaVal}>{sch.totalStudents} Students</h4>
-                    </div>
-                    <span style={styles.verifiedBadge}>
-                      <CheckCircle2 size={13} color="#059669" style={{ marginRight: '3px' }} /> Verified Partner
-                    </span>
-                  </div>
-
-                  <button 
-                    onClick={() => setActiveModalSchool(sch)}
-                    style={styles.viewStudentsBtn}
-                  >
-                    SEE PARTICIPATING STUDENTS ({sch.students.length})
-                    <ChevronRight size={14} style={{ marginLeft: '4px' }} />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </section>
-      )}
-
-      {/* STUDENT BREAKDOWN MODAL */}
-      {activeModalSchool && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modalBox}>
-            <div style={styles.modalHeader}>
-              <div>
-                <h3 style={styles.modalTitle}>{activeModalSchool.name}</h3>
-                <p style={styles.modalSub}>{activeModalSchool.city}, {activeModalSchool.state} &middot; Total: {activeModalSchool.totalStudents} Enrolled</p>
-              </div>
-              <button onClick={() => setActiveModalSchool(null)} style={styles.closeBtn}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <div style={styles.modalBody}>
-              <h4 style={styles.modalListHeading}>Participating Students Roster:</h4>
-              <div style={styles.studentTable}>
-                {activeModalSchool.students.map((st, i) => (
-                  <div key={i} style={styles.studentRow}>
-                    <div>
-                      <h5 style={styles.stName}>{st.name}</h5>
-                      <span style={styles.stGrade}>{st.grade}</span>
-                    </div>
-                    <span style={styles.stTrackPill}>{st.track}</span>
-                    <span style={styles.stStagePill}>{st.stage}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={styles.modalFooter}>
-              <button onClick={() => setActiveModalSchool(null)} style={styles.modalCloseAction}>
-                Close Roster
-              </button>
-            </div>
-          </div>
-        </div>
       )}
 
     </div>
